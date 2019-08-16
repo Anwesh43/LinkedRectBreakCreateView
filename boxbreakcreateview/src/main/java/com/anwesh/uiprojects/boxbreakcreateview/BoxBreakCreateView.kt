@@ -56,7 +56,25 @@ fun Canvas.drawRBCNode(i : Int, scale : Float, paint : Paint) {
     save()
     translate(w / 2, gap * (i + 1))
     for (j in 0..(parts - 1)) {
-        drawRectBreakCreate(i, w / 2, sc1, sc2, paint)
+        drawRectBreakCreate(i, w / 2, sc1, sc2, size, paint)
     }
     restore()
+}
+
+class BoxBreakCreateView(ctx : Context) : View(ctx) {
+
+    private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    override fun onDraw(canvas : Canvas) {
+
+    }
+
+    override fun onTouchEvent(event : MotionEvent) : Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+
+            }
+        }
+        return true
+    }
 }
