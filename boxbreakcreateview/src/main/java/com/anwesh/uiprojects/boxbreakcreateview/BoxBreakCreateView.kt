@@ -193,4 +193,26 @@ class BoxBreakCreateView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : BoxBreakCreateView) {
+
+        private val animator : Animator = Animator(view)
+        private val bbc : BoxBreakCreate = BoxBreakCreate(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            bbc.draw(canvas, paint)
+            animator.animate {
+                bbc.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            bbc.update {i, scl ->
+                animator.start()
+            }
+        }
+    }
 }
