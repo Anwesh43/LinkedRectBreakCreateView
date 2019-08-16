@@ -31,3 +31,32 @@ fun Float.mirrorValue(a : Int, b : Int) : Float {
     return (1 - k) * a.inverse() + k * b.inverse()
 }
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
+
+fun Canvas.drawRectBreakCreate(i : Int, w : Float, sc1 : Float, sc2 : Float, size : Float, paint : Paint) {
+    val sc1i : Float = sc1.divideScale(0, parts)
+    val sc2i : Float = sc2.divideScale(1, parts)
+    val x : Float = size + (-w / 2 - size) * sc1i
+    val updatedSize : Float = size * sc2i
+    save()
+    translate(x, 0f)
+    drawRect(RectF(0f, -size, size + updatedSize, size), paint)
+    restore()
+}
+
+fun Canvas.drawRBCNode(i : Int, scale : Float, paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val sc1 : Float = scale.divideScale(0, 2)
+    val sc2 : Float = scale.divideScale(1, 2)
+    val gap : Float = h / (nodes + 1)
+    val size : Float = gap / sizeFactor
+    paint.color = foreColor
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
+    paint.strokeCap = Paint.Cap.ROUND
+    save()
+    translate(w / 2, gap * (i + 1))
+    for (j in 0..(parts - 1)) {
+        drawRectBreakCreate(i, w / 2, sc1, sc2, paint)
+    }
+    restore()
+}
