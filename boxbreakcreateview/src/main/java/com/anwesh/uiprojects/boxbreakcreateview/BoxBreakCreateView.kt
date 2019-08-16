@@ -223,7 +223,7 @@ class BoxBreakCreateView(ctx : Context) : View(ctx) {
         fun create(activity : Activity) : BoxBreakCreateView {
             val view : BoxBreakCreateView = BoxBreakCreateView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
