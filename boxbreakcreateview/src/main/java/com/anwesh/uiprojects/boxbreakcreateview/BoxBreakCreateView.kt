@@ -21,6 +21,7 @@ val strokeFactor : Int = 90
 val sizeFactor : Float = 2.9f
 val foreColor : Int = Color.parseColor("#E65100")
 val backColor : Int = Color.parseColor("#BDBDBD")
+val delay : Long = 20
 
 fun Int.inverse() : Float = 1f / this
 fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
@@ -33,10 +34,10 @@ fun Float.mirrorValue(a : Int, b : Int) : Float {
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
 
 fun Canvas.drawRectBreakCreate(i : Int, w : Float, sc1 : Float, sc2 : Float, size : Float, paint : Paint) {
-    val sc1i : Float = sc1.divideScale(0, parts)
-    val sc2i : Float = sc2.divideScale(1, parts)
-    val x : Float = size + (-w / 2 - size) * sc1i
+    val sc1i : Float = sc1.divideScale(i, parts)
+    val sc2i : Float = sc2.divideScale(i, parts)
     val updatedSize : Float = size * sc2i
+    val x : Float = (w - (size + updatedSize)) * sc1i
     save()
     translate(x, 0f)
     drawRect(RectF(0f, -size, size + updatedSize, size), paint)
@@ -56,7 +57,10 @@ fun Canvas.drawBBCNode(i : Int, scale : Float, paint : Paint) {
     save()
     translate(w / 2, gap * (i + 1))
     for (j in 0..(parts - 1)) {
-        drawRectBreakCreate(i, w / 2, sc1, sc2, size, paint)
+        save()
+        scale(1f - 2 * j, 1f)
+        drawRectBreakCreate(j, w / 2, sc1, sc2, size, paint)
+        restore()
     }
     restore()
 }
@@ -106,7 +110,7 @@ class BoxBreakCreateView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
@@ -179,7 +183,7 @@ class BoxBreakCreateView(ctx : Context) : View(ctx) {
         private var dir : Int = 1
 
         fun draw(canvas : Canvas, paint : Paint) {
-            curr.draw(canvas, paint)
+            root.draw(canvas, paint)
         }
 
         fun update(cb : (Int, Float) -> Unit) {
@@ -212,7 +216,7 @@ class BoxBreakCreateView(ctx : Context) : View(ctx) {
         }
 
         fun handleTap() {
-            bbc.update {i, scl ->
+            bbc.startUpdating {
                 animator.start()
             }
         }
