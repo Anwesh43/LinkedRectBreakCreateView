@@ -43,7 +43,7 @@ fun Canvas.drawRectBreakCreate(i : Int, w : Float, sc1 : Float, sc2 : Float, siz
     restore()
 }
 
-fun Canvas.drawRBCNode(i : Int, scale : Float, paint : Paint) {
+fun Canvas.drawBBCNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val sc1 : Float = scale.divideScale(0, 2)
@@ -123,6 +123,27 @@ class BoxBreakCreateView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class BBCNode(var i : Int, var state : State = State()) {
+
+        private var next : BBCNode? = null
+        private var prev : BBCNode? = null
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawBBCNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
+        }
+
+        fun update(cb : (Int, Float) -> Unit) {
+            state.update {
+                cb(i, it)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
         }
     }
 }
